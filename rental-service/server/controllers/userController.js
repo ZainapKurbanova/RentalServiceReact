@@ -47,6 +47,7 @@ export const registration = async (req, res, next) => {
    next(ApiError.internal('Ошибка регистрации'));
  }
 };
+
 const login = async (req, res, next) => {
  try {
    const { email, password } = req.body;
@@ -64,4 +65,34 @@ const login = async (req, res, next) => {
    next(ApiError.internal('Ошибка авторизации'));
  }
 };
-export {login};
+
+const checkAuth = (req, res) => {
+ const user = req.user;
+
+ const token = jwt.sign(
+   {
+     id: user.id,
+     email: user.email,
+     username: user.username,
+     userType: user.userType,
+     avatar: user.avatar
+   },
+   process.env.JWT_SECRET,
+   { expiresIn: '24h' }
+ );
+
+ return res.json({
+   id: user.id,
+   email: user.email,
+   username: user.username,
+   avatar: user.avatar,
+   isPro: user.userType === 'pro',
+   token
+ });
+};
+
+const logout = (req, res) => {
+  res.status(204).send();
+};
+
+export {login, checkAuth, logout};
