@@ -1,6 +1,6 @@
 import {Offer} from '../models/offer.js';
 import ApiError from '../error/ApiError.js';
-import { adaptFullOfferToClient } from '../adapters/offerAdapter.js';
+import { adaptOfferToClient } from '../adapters/offerAdapter.js';
 import { User } from '../models/user.js';
 async function getAllOffers(req, res, next) {
     try {
