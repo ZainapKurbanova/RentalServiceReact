@@ -1,7 +1,8 @@
 import {Offer} from '../models/offer.js';
 import ApiError from '../error/ApiError.js';
-import { adaptOfferToClient } from '../adapters/offerAdapter.js';
+import { adaptOfferToClient, adaptFullOfferToClient } from '../adapters/offerAdapter.js';
 import { User } from '../models/user.js';
+
 async function getAllOffers(req, res, next) {
     try {
         const offers = await Offer.findAll();
@@ -71,4 +72,24 @@ export async function createOffer(req, res, next) {
    next(ApiError.internal('Не удалось добавить предложение: ' + error.message));
  }
 }
+export async function getFullOffer(req, res, next) {
+  try {
+    const { id } = req.params;
+
+    const offer = await Offer.findByPk(id, {
+      include: { model: User, as: 'author' }
+    });
+
+    if (!offer) {
+      return next(ApiError.badRequest('Offer not found'));
+    }
+
+    const adapted = adaptFullOfferToClient(offer, offer.author);
+    res.status(200).json(adapted);
+  } catch (error) {
+    console.error('Error fetching full offer:', error);
+    next(error);
+  }
+}
+
 export {getAllOffers};
