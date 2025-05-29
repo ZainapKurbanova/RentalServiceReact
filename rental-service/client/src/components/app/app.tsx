@@ -2,17 +2,35 @@ import { MainPage } from "../../pages/main-page/main-page";
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { FavoritesPage } from '../../pages/favorites/favorites';
 import { LoginPage } from '../../pages/login/login';
-import { OfferPage } from '../../pages/offer/offer';
 import { NotFoundPage } from '../../pages/not-found/not-found';
+import { AppRoute, AuthorizationStatus } from "../../const";
+import { PrivateRoute } from "../../components/private-route/private-route";
+import { JSX } from "react";
+import { FullOffer, OffersList } from "../../types/offer";
+import { offerList } from "../../mocks/offers-list";
+import { OfferPage } from "../../pages/offer/offer";
 
-function App() {
+type AppMainPageProps = {
+  rentalOffersCount: number;
+  offersList: OffersList[];
+  offers: FullOffer[];
+};
+
+function App({ rentalOffersCount, offers }: AppMainPageProps) : JSX.Element {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<MainPage />} />
-        <Route path="/favorites" element={<FavoritesPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/offer" element={<OfferPage />} />
+        <Route path={AppRoute.Main} element={<MainPage rentalOffersCount={ rentalOffersCount } offersList={ offerList }/>} />
+        <Route path={AppRoute.Login} element={<LoginPage />} />
+        <Route
+          path={AppRoute.Favorites}
+          element={
+            <PrivateRoute authorizationStatus={AuthorizationStatus.NoAuth}>
+              <FavoritesPage />
+            </PrivateRoute>
+          }
+        />
+        <Route path={`${AppRoute.Offer}/:id`} element={<OfferPage offers ={offers} />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>
