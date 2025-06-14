@@ -1,20 +1,13 @@
-import { useState } from 'react';
-import { Logo } from '../../components/logo/logo';
-import { FavoriteCardList } from '../../components/favorite-card-list/favorite-card-list';
-import { FullOffer } from '../../types/offer';
-import { offers } from '../../mocks/offers';
+import FavoriteCardList from '../../components/favorite-card-list/favorite-card-list';
+import { FavoriteOffer } from '../../types/offer';
+import {Logo} from '../../components/logo/logo';
+import { JSX } from 'react';
 
-function FavoritesPage() {
-  // Фильтруем только избранные предложения
-  const [favoriteOffers, setFavoriteOffers] = useState<FullOffer[]>(
-    offers.filter((offer) => offer.isFavorite)
-  );
+type FavoritesPageProps = {
+  favorites: FavoriteOffer[];
+};
 
-  const handleRemoveFromFavorites = (id: string) => {
-    // Обновляем состояние, исключая предложение с указанным id
-    setFavoriteOffers(favoriteOffers.filter((offer) => offer.id !== id));
-  };
-
+function FavoritesPage({ favorites }: FavoritesPageProps): JSX.Element {
   return (
     <div className="page">
       <header className="header">
@@ -26,21 +19,14 @@ function FavoritesPage() {
             <nav className="header__nav">
               <ul className="header__nav-list">
                 <li className="header__nav-item user">
-                  <a
-                    className="header__nav-link header__nav-link--profile"
-                    href="#"
-                  >
+                  <a className="header__nav-link header__nav-link--profile" href="#">
                     <div className="header__avatar-wrapper user__avatar-wrapper"></div>
-                    <span className="header__user-name user__name">
-                      Myemail@gmail.com
-                    </span>
-                    <span className="header__favorite-count">{favoriteOffers.length}</span>
+                    <span className="header__user-name user__name">Myemail@gmail.com</span>
+                    <span className="header__favorite-count">{favorites.length}</span>
                   </a>
                 </li>
                 <li className="header__nav-item">
-                  <a className="header__nav-link" href="#">
-                    <span className="header__signout">Sign out</span>
-                  </a>
+                  <a className="header__nav-link" href="#"><span className="header__signout">Sign out</span></a>
                 </li>
               </ul>
             </nav>
@@ -49,31 +35,17 @@ function FavoritesPage() {
       </header>
 
       <main className="page__main page__main--favorites">
-        {favoriteOffers.length > 0 ? (
-          <>
+        <div className="page__favorites-container container">
+          <section className="favorites">
             <h1 className="favorites__title">Saved listing</h1>
-            <FavoriteCardList
-              favorites={favoriteOffers}
-              onRemoveFromFavorites={handleRemoveFromFavorites}
-            />
-          </>
-        ) : (
-          <div className="favorites__status-wrapper">
-            <h1 className="favorites__title">Favorites is empty</h1>
-            <p className="favorites__status">You have not added any places to your favorites yet.</p>
-          </div>
-        )}
+            <FavoriteCardList offers={favorites} />
+          </section>
+        </div>
       </main>
 
       <footer className="footer container">
-        <a className="footer__logo-link" href="main.html">
-          <img
-            className="footer__logo"
-            src="/img/logo.svg"
-            alt="6 cities logo"
-            width="64"
-            height="33"
-          />
+        <a className="footer__logo-link" href="#">
+          <img className="footer__logo" src="img/logo.svg" alt="Rent service logo" width="64" height="33" />
         </a>
       </footer>
     </div>
